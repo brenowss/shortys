@@ -2,17 +2,20 @@
   "name": "shortys",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
     "dev": "tsx watch ./src/server.ts",
     "setup": "tsx ./src/setup.ts",
-    "drop": "tsx ./src/drop-table.ts"
+    "drop": "tsx ./src/drop-table.ts",
+    "test:watch": "node --test --watch ./src/tests/*"
   },
   "author": "brenowss",
   "license": "ISC",
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/node": "^20.11.29",
+    "pino-pretty": "^10.3.1",
+    "tap": "^18.7.1",
     "tsx": "^4.7.1",
     "typescript": "^5.4.2"
   },
