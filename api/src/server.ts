@@ -97,6 +97,20 @@ app.get('/api/hits', async (request, reply) => {
   return reply.send(result);
 });
 
+app.get('/api/hits/:shortLinkId', async (request, reply) => {
+  const { shortLinkId } = z
+    .object({
+      shortLinkId: z.string(),
+    })
+    .parse(request.params);
+
+  const hits = await redis.zScore('hits', shortLinkId);
+
+  return reply.send({
+    hits: hits || 0,
+  });
+});
+
 app
   .listen({
     port: 3000,

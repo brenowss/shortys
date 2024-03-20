@@ -15,6 +15,10 @@ class LinksService {
   async listLinks() {
     return this.httpClient.get('/api/links');
   }
+
+  async getHits(shortLinkId: string) {
+    return this.httpClient.get(`/api/hits/${shortLinkId}`);
+  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
