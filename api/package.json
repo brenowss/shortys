@@ -11,11 +11,13 @@
   "author": "brenowss",
   "license": "ISC",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@types/node": "^20.11.29",
     "tsx": "^4.7.1",
     "typescript": "^5.4.2"
   },
   "dependencies": {
+    "@fastify/cors": "^9.0.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
     "postgres": "^3.4.3",
