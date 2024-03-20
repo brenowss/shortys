@@ -15,6 +15,10 @@ import {
   FormMessage,
 } from './components/ui/form';
 import { Input } from './components/ui/input';
+import LinksService from './services/LinksService';
+import generateRandomSlug from './utils/generateRandomSlug';
+import toast from './utils/toast';
+import { useState } from 'react';
 
 const formSchema = z.object({
   slug: z
@@ -31,6 +35,8 @@ const formSchema = z.object({
 });
 
 export default function CreationForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,11 +45,24 @@ export default function CreationForm() {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsSubmitting(true);
+      const response = await LinksService.createLink(values);
+
+      if (response.shortLinkId) {
+        toast({
+          text: 'Link created successfully',
+          type: 'success',
+          time: 3000,
+        });
+        form.reset();
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -70,20 +89,46 @@ export default function CreationForm() {
           name="slug"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Slug</FormLabel>
+              <div className="flex justify-between items-center">
+                <FormLabel>Slug</FormLabel>
+
+                <Button
+                  type="button"
+                  variant={'ghost'}
+                  onClick={() => {
+                    const randomSlug = generateRandomSlug(10);
+                    form.setValue('slug', randomSlug);
+                    form.trigger('slug');
+                  }}
+                  className="py-0"
+                >
+                  Randomize 🎲
+                </Button>
+              </div>
               <FormControl>
                 <Input placeholder="my-awesome-url" {...field} maxLength={24} />
               </FormControl>
               <FormDescription className="break-words">
                 Enter a custom slug for your URL. <br />
-                It will look like: https://shortys.vercel.app/
-                {form.getValues().slug}
+                It will look like:{' '}
+                <strong>
+                  https://shortys.vercel.app/
+                  {form.getValues().slug}
+                </strong>
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={
+            form.getValues().slug === '' ||
+            form.getValues().url === '' ||
+            isSubmitting
+          }
+        >
           Create 🚀
         </Button>
       </form>
